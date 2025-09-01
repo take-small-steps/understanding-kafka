@@ -1,4 +1,4 @@
 rootProject.name = "understanding-kafka"
 
-include("main")
+include("kafka-producer")
 include("consumer")

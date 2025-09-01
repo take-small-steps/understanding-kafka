@@ -35,21 +35,18 @@ class KafkaMessageConsumer {
             // 메시지 처리 로직
             processMessage(message, key)
             
-            // 메시지 처리 완료 후 수동으로 커밋 (필요한 경우)
+
             acknowledgment?.acknowledge()
             
         } catch (e: Exception) {
             logger.error("[CONSUMER] Error processing message: {}", e.message, e)
-            // 에러 처리 로직을 여기에 구현할 수 있습니다
+
         }
     }
     
     private fun processMessage(message: String, key: String?) {
         logger.info("[CONSUMER] Processing message with key '{}': {}", key ?: "null", message)
-        
-        // 실제 비즈니스 로직을 여기에 구현합니다
-        // 예: 데이터베이스 저장, 외부 API 호출, 파일 처리 등
-        
+
         // 시뮬레이션: 메시지 처리 시간
         Thread.sleep(100)
         
