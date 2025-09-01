@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"     # 내부용(도커 네트워크) 리스너
+      - "29092:29092"   # 외부용(호스트) 리스너
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      # 1) 브로커가 실제로 바인드할 리스너(내부/외부)
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+
+      # 2) 클라이언트에게 광고할 주소
+      #    - 도커 내부 클라이언트(kafka-ui 등)는 kafka:9092 로 접근
+      #    - 호스트에서 로컬 클라이언트는 localhost:29092 로 접근
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+
+      # 3) 프로토콜 매핑 + 브로커 내부 통신 리스너 지정
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      # 단일 브로커 환경 편의 설정
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      # 도커 네트워크 상의 브로커 주소를 사용해야 함
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
