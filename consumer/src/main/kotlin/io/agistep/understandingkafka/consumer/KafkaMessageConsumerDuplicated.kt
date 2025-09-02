@@ -9,9 +9,9 @@ import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Service
 
 @Service
-class KafkaMessageConsumer {
+class KafkaMessageConsumerDuplicated {
     
-    private val logger = LoggerFactory.getLogger(KafkaMessageConsumer::class.java)
+    private val logger = LoggerFactory.getLogger(KafkaMessageConsumerDuplicated::class.java)
     
     @KafkaListener(topics = ["loopers-example-topic"], groupId = "loopers-group2")
     fun consumeMessage(
@@ -23,7 +23,7 @@ class KafkaMessageConsumer {
         acknowledgment: Acknowledgment?
     ) {
         logger.info(
-            "[CONSUMER] Received message from topic '{}', partition: {}, offset: {}, key: '{}', message: '{}'",
+            "[KafkaMessageConsumerDuplicated] Received message from topic '{}', partition: {}, offset: {}, key: '{}', message: '{}'",
             topic,
             partition,
             offset,
@@ -39,17 +39,17 @@ class KafkaMessageConsumer {
             acknowledgment?.acknowledge()
             
         } catch (e: Exception) {
-            logger.error("[CONSUMER] Error processing message: {}", e.message, e)
+            logger.error("[KafkaMessageConsumerDuplicated] Error processing message: {}", e.message, e)
 
         }
     }
     
     private fun processMessage(message: String, key: String?) {
-        logger.info("[CONSUMER] Processing message with key '{}': {}", key ?: "null", message)
+        logger.info("[KafkaMessageConsumerDuplicated] Processing message with key '{}': {}", key ?: "null", message)
 
         // 시뮬레이션: 메시지 처리 시간
         Thread.sleep(100)
         
-        logger.info("[CONSUMER] Message processed successfully")
+        logger.info("[KafkaMessageConsumerDuplicated] Message processed successfully")
     }
 }

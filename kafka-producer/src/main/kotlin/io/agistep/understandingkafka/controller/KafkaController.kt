@@ -13,7 +13,9 @@ class KafkaController(
     @PostMapping("/send")
     fun sendMessage(@RequestBody request: MessageRequest): ResponseEntity<MessageResponse> {
         return try {
-            kafkaProducer.sendMessage(request.message)
+            for (i in 1..50) {
+                kafkaProducer.sendMessage(request.message)
+            }
             ResponseEntity.ok(
                 MessageResponse(
                     success = true,
@@ -33,7 +35,10 @@ class KafkaController(
     @PostMapping("/send-with-key")
     fun sendMessageWithKey(@RequestBody request: MessageWithKeyRequest): ResponseEntity<MessageResponse> {
         return try {
-            kafkaProducer.sendMessage(request.key, request.message)
+            for (i in 1..50) {
+                kafkaProducer.sendMessage(request.key, request.message)
+            }
+
             ResponseEntity.ok(
                 MessageResponse(
                     success = true,

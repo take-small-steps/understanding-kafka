@@ -1,11 +1,20 @@
 package io.agistep.understandingkafka.config
 
+import org.apache.kafka.clients.admin.NewTopic
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.annotation.EnableKafka
+import org.springframework.kafka.config.TopicBuilder
 
 @Configuration
 @EnableKafka
 class KafkaConfig {
-    // Kafka 설정은 application.properties에서 자동으로 적용됩니다.
-    // 필요한 경우 여기에 추가적인 커스텀 설정을 할 수 있습니다.
+
+    @Bean
+    fun exampleTopic(): NewTopic {
+        return TopicBuilder.name("loopers-example-topic")
+            .partitions(2)
+            .replicas(1)
+            .build()
+    }
 }
